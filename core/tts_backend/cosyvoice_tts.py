@@ -2,7 +2,7 @@ from pathlib import Path
 import os, sys
 from openai import OpenAI
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from core.config_utils import load_key
+from core.utils import *
 
 def cosyvoice_tts(text, save_path):
     """
