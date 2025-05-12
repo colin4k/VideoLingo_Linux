@@ -152,6 +152,45 @@ def page_setting():
         elif select_tts == "f5tts":
             config_input("302ai API", "f5tts.302_api")
         
+        elif selected_tts == "cosy_voice":
+            cosy_api_key = st.text_input("CosyVoice API Key", value=load_key("cosy_voice.api_key"))
+            if cosy_api_key != load_key("cosy_voice.api_key"):
+                update_key("cosy_voice.api_key", cosy_api_key)
+                
+            cosy_api_url = st.text_input("CosyVoice API URL", value=load_key("cosy_voice.api_url"), help="CosyVoice API URL")
+            if cosy_api_url != load_key("cosy_voice.api_url"):
+                update_key("cosy_voice.api_url", cosy_api_url)
+            
+            cosy_voice_options = ["中文女", "中文男", "日语男", "粤语女", "英文女", "英文男", "韩语女"]
+            selected_cosy_voice = st.selectbox(
+                "CosyVoice Role",
+                options=cosy_voice_options,
+                index=cosy_voice_options.index(load_key("cosy_voice.voice")) if load_key("cosy_voice.voice") in cosy_voice_options else 0
+            )
+            if selected_cosy_voice != load_key("cosy_voice.voice"):
+                update_key("cosy_voice.voice", selected_cosy_voice)
+            
+            use_reference_audio = st.toggle("User reference audio", value=load_key("cosy_voice.use_reference_audio"))
+            if use_reference_audio != load_key("cosy_voice.use_reference_audio"):
+                update_key("cosy_voice.use_reference_audio", use_reference_audio)
+            
+            if use_reference_audio:
+                reference_audio = st.text_input("Reference audio file", value=load_key("cosy_voice.reference_audio"), help="Reference audio file path relative to api.py")
+                if reference_audio != load_key("cosy_voice.reference_audio"):
+                    update_key("cosy_voice.reference_audio", reference_audio)
+                
+            col1, col2 = st.columns([4, 1])
+            with col1:
+                cosy_speed = st.slider("语速", min_value=0.5, max_value=2.0, value=load_key("cosy_voice.speed"), step=0.1, help="adjust speech speed")
+                if cosy_speed != load_key("cosy_voice.speed"):
+                    update_key("cosy_voice.speed", cosy_speed)
+            with col2:
+                if st.button("📡", key="cosy"):
+                    if valid_cosy_voice_api(cosy_api_key, cosy_api_url):
+                        st.toast("CosyVoice API key is valid", icon="✅")
+                    else:
+                        st.toast("CosyVoice API key is invalid", icon="❌")
+        
 def check_api():
     try:
         resp = ask_gpt("This is a test, response 'message':'success' in json format.", 
